@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Name: A coding challenge</title>
+    <title>Livid Events: A coding challenge</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.15.1/devicon.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
@@ -37,7 +37,7 @@
                                <a class="nav-link active"  aria-current="page" href="/code.html">The Code</a>
                            </li>
                            <li class="nav-item">
-                               <a class="nav-link" href="https://github.com/SamBasch/Palindrome-CheckerJS">The Repo</a>
+                               <a class="nav-link" href="https://jovial-peony-3974a5.netlify.app">The Repo</a>
                            </li>
                            <li class="nav-item">
                                <a class="nav-link" href="https://musical-torrone-7a3441.netlify.app">About</a>
@@ -59,81 +59,12 @@
                 <pre class="line-numbers">
                     <code class="language-js">
 
-                        //entry point
-                        function getUserInput() {
-                            let userInput = document.getElementById('userString').value;
-                        
-                            let trimmedText = regularExpression(userInput);
-                        
-                            let revString = reverseTheString(trimmedText);
-                        
-                            PalindromeeChecker(trimmedText, revString);
-                        }
-                        
-                        
-                        
-                        
-                        
-                        
-                        //this function takes the user input and trmis off any non alphabet characters and all whitespace then returns the trimmed string back to entry point function
-                        function regularExpression(stringToTrim) {
-                        
-                            let txt_new = stringToTrim.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
-                        
-                            console.log(stringToTrim);
-                        
-                            return txt_new;
-                        
-                        }
-                        
-                        //this function takes the string that was trimmed by the regular expression function and reverses the string
-                        function reverseTheString(string) {
-                            
-                            let startingArray = string.split('');
-                        
-                            let reverseArray = [];
-                        
-                            for (let i = 0; i < startingArray.length; i++) {
-                        
-                                reverseArray.unshift(startingArray[i]);
-                            }
-                            return reverseArray.join('');
-                        }
-                        
-                        //Palindrome Verifier Function 
-                        
-                        function PalindromeChecker(stringToCheck, reversedString) {
-                        
-                            let message = `Your phrase reversed is ${reversedString}`
-                        
-                            let messageSpot = document.getElementById('resultsGood');
-                        
-                            if (stringToCheck !== reversedString) {
-                        
-                                document.getElementById('alertBad').classList.remove('invisible');
-                            } else {
-                        
-                                document.getElementById('alertGood').classList.remove('invisible');
-                        
-                            }
-                        
-                            messageSpot.innerHTML = message;
-                        }
                         
                     </code>
                 </pre>
             </div>
             <!--Code Description-->
             <div class="col-12 col-lg-4">
-                <p>The code is structured in four function</p>
-                <h5><code>getUserInput()</code></h5>
-                <p>This function serves as the controller or entry point function. It is responsible for retreiving the user input from the web page. It also creates variables from the return functions of the other three functions. It also passes all the parameters to the other three functions.</p>
-                <h5><code>regularExpression()</code></h5>
-                <p>This function is responsible for taking the user input passed by the first function and (via a regular expression) replaces (via 'replace method') all non alphabet characters with nothing, essentially deleting it. It then forces all the characters remaining to become lowercase. It then returns the 'trimmed' string back to the controller function. </p>
-                <h5><code>reverseTheString()</code></h5>
-                <p>This function is responsible for taking the string that was 'trimmed' by the regular expression and reversing that string and assigning it to a new variable called 'reverseArray'. The reversed string is then retruned to the controller function.</p>
-                <h5><code>PalindromeChecker()</code></h5>
-                <p>This final function is responsible for taking the string processed by the regular expression as well as the reversement of that string and comparing them to each other with an if statement thereby checking to see if its a palindrome. Via an if statement you will receive a red "not a palindrome" message or a green successful message. This function, in addition to displaying the failure and success cards, also displays the reversed version of the original phrase you entered.</p>
             </div>
         </div>
     </main>
