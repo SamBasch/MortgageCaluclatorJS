@@ -18,9 +18,13 @@ function getUserInput() {
         interestRateCalculator(loanInput, termLengthInput, interestRateInput, monthlyPayment);
 
 
+        
+
         calculateTotals();
 
         displayMortgageTable(termLengthInput, monthlyPayment);
+
+       
 
     
 
@@ -195,9 +199,7 @@ function calculateTotals() {
     totalsArray.unshift(totalPrincple);
     totalsArray.unshift(totalInterest);
 
-        console.log(runningTotalInterestArray);
-        console.log(totalsArray)
-  
+
 
 
     localStorage.setItem("totalsData", JSON.stringify(totalsArray));

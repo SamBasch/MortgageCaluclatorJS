@@ -58,6 +58,313 @@
             <div class="col-12 col-lg-8">
                 <pre class="line-numbers">
                     <code class="language-js">
+                            
+
+function getUserInput() {
+
+
+    let loanInput = document.getElementById('loanAmountInput').value;
+    let termLengthInput = document.getElementById('termInput').value;
+    let interestRateInput = document.getElementById('interestRateInput').value;
+    loanInput = parseInt(loanInput);
+    termLengthInput = parseInt(termLengthInput);
+    interestRateInput = parseInt(interestRateInput);
+
+
+    if (Number.isInteger(loanInput) && Number.isInteger(termLengthInput) && Number.isInteger(interestRateInput)) {
+
+        let monthlyPayment = monthlyPaymentCalculator(loanInput, termLengthInput, interestRateInput);
+    
+        interestRateCalculator(loanInput, termLengthInput, interestRateInput, monthlyPayment);
+
+
+        
+
+        calculateTotals();
+
+        displayMortgageTable(termLengthInput, monthlyPayment);
+
+       
+
+    
+
+        displayOverview(monthlyPayment);
+
+
+} else {
+
+    Swal.fire(
+        {
+            icon: 'error',
+            title: 'Oops!',
+            text: 'Only integers are allowed for Mortgage Calculator!'
+
+        }
+    );
+
+
+}
+
+
+
+
+
+
+
+   
+  
+
+
+
+
+}
+
+
+function monthlyPaymentCalculator(loanAmount, termLength, interestRate) {
+
+    // stepOne - interestRate / 1200
+    let stepOne = interestRate / 1200;
+    //
+    let stepTwo = loanAmount * stepOne;
+
+    let stepThree = 1 + stepOne;
+
+    let negativeTerm = -Math.abs(termLength);
+
+    let stepFour = Math.pow(stepThree, negativeTerm);
+
+    let stepFive = 1 - stepFour;
+
+    let stepSix = stepTwo / stepFive;
+
+
+    return stepSix;
+
+
+
+
+
+
+
+
+}
+
+function interestRateCalculator(initialLoan, termLength, interestRate, monthlyPayment) {
+    let largeArray = [];
+
+    let principleArray = [];
+
+    let interestArray = [];
+
+    let balanceArray = [];
+
+    let initialInterest = initialLoan * interestRate / 1200;
+
+    let initialPrinciple = monthlyPayment - initialInterest;
+
+    let firstNewBalance = initialLoan - initialPrinciple;
+
+
+    balanceArray.unshift(firstNewBalance);
+
+
+
+
+    for (let i = 1; i < termLength; i++) {
+
+
+        let nextInterest = firstNewBalance * interestRate / 1200;
+
+        let nextPrinciple = monthlyPayment - nextInterest;
+
+        firstNewBalance -= nextPrinciple;
+
+        principleArray.push(nextPrinciple);
+
+        interestArray.push(nextInterest);
+
+        balanceArray.push(firstNewBalance);
+
+    }
+
+    principleArray.unshift(initialPrinciple);
+    interestArray.unshift(initialInterest);
+
+
+    largeArray.push(principleArray);
+    largeArray.push(interestArray);
+    largeArray.push(balanceArray);
+    
+
+
+
+    localStorage.setItem("sb-data", JSON.stringify(largeArray));
+
+    return;
+
+
+
+
+}
+
+
+function calculateTotals() {
+
+
+    let largeArray = JSON.parse( localStorage.getItem('sb-data') );
+
+    let principleArray = largeArray.shift();
+
+    let interestArray = largeArray.shift();
+
+
+
+
+    let runningTotalInterestArray = [];
+    
+    let totalsArray = [];
+
+    let totalPrincple = 0;
+
+    let totalInterest = 0;
+
+
+
+
+
+
+
+
+
+    for (let i = 0; i < principleArray.length; i++) {
+
+            totalPrincple += principleArray[i];
+            
+    }
+
+
+
+
+    for (let i = 0; i < interestArray.length; i++) {
+
+        totalInterest += interestArray[i];
+        runningTotalInterestArray.push(totalInterest);
+    }
+
+
+
+
+
+
+    totalsArray.unshift(totalPrincple);
+    totalsArray.unshift(totalInterest);
+
+
+
+
+    localStorage.setItem("totalsData", JSON.stringify(totalsArray));
+
+    localStorage.setItem("runningTotalInterestData", JSON.stringify(runningTotalInterestArray));
+    
+
+            return;
+
+    
+
+}
+
+
+function displayMortgageTable(termLength, monthlyPayment) {
+
+
+    let largeArray = JSON.parse( localStorage.getItem('sb-data') );
+
+    let runningInterestArray = JSON.parse( localStorage.getItem('runningTotalInterestData') );
+
+    let pArray = largeArray.shift();
+
+    let iArray = largeArray.shift();
+
+    let balanceArray = largeArray.shift();
+
+
+
+
+
+
+
+
+
+
+
+
+
+    let tableBody = document.getElementById('tableEvent');
+    const tableRowTemplate = document.getElementById('eventTableRowTemplate');
+    tableBody.innerHTML = '';
+
+
+
+    for (let i = 1; i <= termLength; i++) {
+        let eventRow = document.importNode(tableRowTemplate.content, true);
+        let tableCells = eventRow.querySelectorAll('td');
+
+
+
+        tableCells[0].textContent = i;
+        tableCells[1].textContent = monthlyPayment.toLocaleString();
+        tableCells[2].textContent = pArray[i - 1].toLocaleString();
+        tableCells[3].textContent = iArray[i - 1].toLocaleString();
+        tableCells[4].textContent = runningInterestArray[i - 1].toLocaleString();
+        tableCells[5].textContent = balanceArray[i - 1].toLocaleString();
+
+
+        tableBody.appendChild(eventRow);
+
+
+
+    }
+
+         return;
+
+
+
+       
+
+
+}
+
+
+
+
+
+function displayOverview(monthlyPayment) {
+
+        let totalsArray = JSON.parse( localStorage.getItem('totalsData') );
+
+
+        let totalPrinciple = totalsArray.pop();
+
+        let totalInterest = totalsArray.pop();
+
+        let totalBalance = totalInterest + totalPrinciple;
+
+        let monthlyPaymentSection = document.getElementById('monthlyDisplay');
+        monthlyPaymentSection.innerHTML = `monthly payment: $${monthlyPayment.toLocaleString()}`;
+
+        let totalPrincipleSection = document.getElementById('totalPrincipleDisplay');
+        let totalInterestSection = document.getElementById('totalInterestDisplay');
+        let totalCostSection = document.getElementById('totalCost');
+
+        totalPrincipleSection.innerHTML = `Total Principle: $${totalPrinciple.toLocaleString()}`
+        totalInterestSection.innerHTML = `Total Interest: $${totalInterest.toLocaleString()}`
+        totalCostSection.innerHTML = `Total Cost: $${totalBalance.toLocaleString()}`
+
+
+}
+
+
+
 
                         
                     </code>
@@ -65,6 +372,22 @@
             </div>
             <!--Code Description-->
             <div class="col-12 col-lg-4">
+                <p>The code is structured in six functions</p>
+                <h5><code>getUserInput()</code></h5>
+                <p>This function serves as the controller or entry point function. It is responsible for retreiving the user input (loan amount, term length, and interest rate) from the web page. The function then parses the user inputs into integers, and validates the parsed input to make sure they are number integers. This function is also responsible for controlling the flow of functions and creates variables from the return functions of the other functions. It also passes all the parameters needed to the other functions.</p>
+                <h5><code>monthlyPaymentCalculator()</code></h5>
+                <p>This function is strictly responsible for finding the monthly payment. This function receives the parameters 'loanInput', 'termLength', and 'interestRate' from the controller function 'getUserInput()'. These three parameters are the essentially the unproccessed inptus given by the user in the first function.  I 'exploded' the equation into six different steps for my better understanding and organization. After this function completes it returns the produced monthly payment back to the controller function as the 'return variable' of this functions call. </p>
+                <h5><code>interestRateCalculator()</code></h5>
+                <p>This function is responsible for taking four parameters 'initialLoan', 'termLength', 'interestRate' and 'monthlyPayment'. all of the paramets excluding the 'monthlyPayment' parameter are simply the user inputs and the 'monthlyPayment' parameter is the monthly payment produced from the second function or 'monthlyPaymentCalculator' function</p>
+                <p>This function uses these four parameters and a for loop to calculate the interest rate, principle and remaining balance for every month based off of the inputs given by the user. With every loop the current months value (interest, principle and remaining balance) is 'pushed' onto respective seperate array that were initialized as empty at the top of the function. The intial values calculated are also 'unshifted' to the beginning of the array. </p>
+                <p>Now that I have 3 seperate arrays carrying their respective values ('interest, principle, and remaining balance') for every month, I then pushed each of those 3 arrays into 1 array thereby creating a multi dimensional array... 1 large array carrying 3 arrays. After that I put that large multidimensional array into local storage for later use, as well as my own peace of mind and organization.  </p>
+                <h5><code>calculateTotals()</code></h5>
+                <p>This function is responsible for finding the total accumulated interest and total interest and principle. To begin this function I retreived the multi dimensional array from local storage and then 'unpacked' the array using the .shift() method thereby creating 2 normal arrays.. one array housing all of the monthly interest values and the other holding all of the monthly principle values. The arrays are given their names accordingly. To find the total accumulated interest and principle I initialzied two variables at 0 and gave them respective variable names for accumulated principle and interest.</p>
+                <h5><code>displayMortgageTable()</code></h5>
+                <p>This function is responsible for taking all of the produced arrays from the last two functions and displaying all values on the web page in the form of a table. This is done by an HTML template and importNode. </p>
+                <p>The function begins by retreiving the needed arrays from local storage as well as unpacking the multidimensional array into seperate respectively named arrays. It then adds the table content via the HTML template and a for loop. The for loop is set to iterate as many times as the input loan term length. </p>
+                <h5><code>displayOverview()</code></h5>
+                <p>This final function is responsible for retreiving the 'totals' array from locale storage to display the calculated totals in the overview section of the web page. It is also passed the parameter 'monthlyPayment' to display that in the overview area as well. The total cost is also calculated in this function by adding the total principle and total interest together, these two values were retreived from the 'totals' array in local storage. The method of displaying all of these values were HTML element id's and the .innerHTML technique.</p>
             </div>
         </div>
     </main>
